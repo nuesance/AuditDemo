@@ -1,7 +1,10 @@
-AuditDemo/out/
-AuditDemo/.idea/workspace.xml
-AuditDemoAndroid/app/build
-AuditDemoAndroid/.gradle
-AuditDemoAndroid/.idea/caches/
-AuditDemoAndroid/.idea/libraries/
-AuditDemoAndroid/gradle/
+**/out/
+**/build/
+**/caches/
+**/libraries/
+**/gradle/
+**/.gradle/
+**/workspace.xml
+**/vcs.xml
+**/misc.xml
+**/gradlew*
