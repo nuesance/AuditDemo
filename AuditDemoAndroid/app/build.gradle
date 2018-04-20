@@ -1,0 +1,45 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    signingConfigs {
+        config {
+            keyAlias 'chiman'
+            keyPassword 'Prescient#1'
+            storeFile file('D:/AndroidApps/KeyStore/Chiman.jks')
+            storePassword 'Prescient#1'
+        }
+    }
+    defaultConfig {
+        applicationId "in.prcj.auditdemo"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        signingConfig signingConfigs.config
+        setProperty("archivesBaseName", "AuditDemo")
+        buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            ext.enableCrashlytics = false
+            signingConfig signingConfigs.config
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+}
