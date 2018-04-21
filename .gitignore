@@ -1,9 +1,11 @@
 **/out/
+**/db
 **/build/
 **/caches/
 **/libraries/
 **/gradle/
 **/.gradle/
+**/.vs
 **/workspace.xml
 **/vcs.xml
 **/misc.xml

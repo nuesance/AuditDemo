@@ -903,6 +903,12 @@ function $$a(ele) {
     return ui.ele.build(ele);
 }
 
+function $$button(ele) {
+    var ele = ele || {};
+    ele.typ = 'button';
+    return ui.ele.build(ele);
+}
+
 function $$fieldset(ele) {
     var ele = ele || {};
     ele.typ = 'fieldset';

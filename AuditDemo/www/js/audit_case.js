@@ -56,30 +56,33 @@ var audit_case_detail = (function () {
         ui.header.render(opts);
 
         var $dataDiv = ui.getEmptyDataDiv();
+        var $dataDiv = ui.getDataDiv();
+        var $dtlsec_hdr = $$button({ class: 'dtlsec_hdr', html: 'Taxpayer Information' }).appendTo($dataDiv);
+        taxpayerInformation($dtlsec_hdr);
+        var $dtlsec_hdr = $$button({ class: 'dtlsec_hdr', html: 'Audit Information' }).appendTo($dataDiv);
+        auditInformation($dtlsec_hdr);
+        var $dtlsec_hdr = $$button({ class: 'dtlsec_hdr', html: 'Supervisor Information' }).appendTo($dataDiv);
+        supervisorInformation($dtlsec_hdr);
+        var $dtlsec_hdr = $$button({ class: 'dtlsec_hdr', html: 'Audit Years' }).appendTo($dataDiv);
+        auditYears($dtlsec_hdr);
 
-        var $table = $$table({ style: 'width: 100%' }).appendTo($dataDiv);
-        var $tr = $$tr().appendTo($table);
-        $menuTd = $$td({ style: 'width: 1%; vertical-align:top; padding:10px;' }).appendTo($tr);
-        $detailTd = $$td({ style: 'width: 99%; vertical-align: top; padding:10px;' }).appendTo($tr);
-
-        renderMenuItem('Taxpayer Information', taxpayerInformation);
-        renderMenuItem('Audit Information', function () { $detailTd.html('Audit Information'); });
-        renderMenuItem('Supervisor Information', function () { $detailTd.html('Supervisor Information'); });
-        renderMenuItem('Audit Years', function () { $detailTd.html('Audit Years'); });
-    };
-
-    function renderMenuItem(txt, func) {
-        $$div({
-            style: 'white-space: nowrap; margin:10px;', child: {
-                typ: 'a', html: txt, click: func
+        $('.dtlsec_hdr').click(function () {
+            var $btn = $(this);
+            $btn.toggleClass('active');
+            var $dtlsec = $btn.next();
+            if ($dtlsec.css('max-height') != '0px') {
+                $dtlsec.css('max-height', 0);
+                $dtlsec.css('padding', 0);
+            } else {
+                $dtlsec.css('padding', 5);
+                $dtlsec.css('max-height', $dtlsec[0].scrollHeight);
             }
-        }).appendTo($menuTd);
+        });
     };
 
-    function taxpayerInformation() {
-        $detailTd.empty();
-        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($detailTd);
-
+    function taxpayerInformation($dtlsec_hdr) {
+        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
         var $table = $$table().appendTo($fieldSet);
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'Legal Name: ', style: 'text-align:right;' }).appendTo($tr);
@@ -109,6 +112,31 @@ var audit_case_detail = (function () {
             db.audit_case.set(id, data).then(taxpayerInformation);
         }
     };
+
+    function auditInformation($dtlsec_hdr) {
+        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
+        var $table = $$table().appendTo($fieldSet);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'auditInformation: ', style: 'text-align:right;' }).appendTo($tr);
+    };
+
+    function supervisorInformation($dtlsec_hdr) {
+        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
+        var $table = $$table().appendTo($fieldSet);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'supervisorInformation: ', style: 'text-align:right;' }).appendTo($tr);
+    };
+
+    function auditYears($dtlsec_hdr) {
+        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
+        var $table = $$table().appendTo($fieldSet);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'auditYears: ', style: 'text-align:right;' }).appendTo($tr);
+    };
+
 
     return {
         render: render,
