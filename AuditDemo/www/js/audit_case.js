@@ -6,15 +6,19 @@ var audit_case = (function () {
         var opts = {
             title: 'Create Case',
             fields: {
-                case_name: { typ: 'text', label: 'Case Name', required: true, placeholder: 'Enter Case Name' },
-                desc: { typ: 'textarea', label: 'Description', required: true, rows: 5 },
+                legal_name: { typ: 'text', label: 'Legal Name', required: true, placeholder: 'Enter Legal Name' },
             }
         };
 
         var form = ui.form.create(opts);
         form.onSubmit = function (valuMap) {
             var key = db.createKey();
-            db.audit_case.add(key, valuMap).then(renderList);
+            var data = {
+                tp: {
+                    legal_name: valuMap.legal_name, physical_address: {}, mailing_address: {}, initial_contact: {}, representative: {}
+                }, primary_auditor: {}, details: {}, supervisor: {}, audit_period: {}
+            };
+            db.audit_case.add(key, data).then(renderList);
         };
     };
 
@@ -23,8 +27,8 @@ var audit_case = (function () {
         $listDiv.empty();
         util.callAjax('db', 'getAll', { tname: 'audit_case' }).then(function (map) {
             $.each(map, function (id, data) {
-                var txt = '<b>Legal Name:</b> ' + data.ta.legal_name + ' <b>Virginia Id:</b> ' + data.ta.virginia_id + ' <b>FEIN:</b> ' + data.ta.FEIN +
-                    '<br><b>Primary Auditor:</b> ' + data.setup.primary_auditor.name;
+                var txt = '<b>Legal Name:</b> ' + data.tp.legal_name + ' <b>Virginia Id:</b> ' + data.tp.virginia_id + ' <b>FEIN:</b> ' + data.tp.FEIN +
+                    '<br><b>Primary Auditor:</b> ' + data.primary_auditor.name;
 
                 $$div({
                     html: txt, class: 'card_1', style: 'cursor: pointer;', click: function () {
@@ -51,7 +55,7 @@ var audit_case_detail = (function () {
         id = key;
         data = dat;
         var opts = {
-            title: data.ta.legal_name,
+            title: data.tp.legal_name,
         };
         ui.header.render(opts);
 
@@ -81,27 +85,29 @@ var audit_case_detail = (function () {
     };
 
     function taxpayerInformation($dtlsec_hdr) {
-        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        var $dtlsec = $('#tp_info');
+        if ($dtlsec.length == 0) $dtlsec = $$div({ id: 'tp_info', class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        $dtlsec.empty();
 
         var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
         var $table = $$table().appendTo($fieldSet);
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'Legal Name: ', style: 'text-align: right;' }).appendTo($tr);
         var $td = $$td({ colspan: 5 }).appendTo($tr);
-        var $legal_name = $$input({ size: 50, style: 'width: 100%;' }).val(data.ta.legal_name).appendTo($td);
+        var $legal_name = $$input({ size: 50, style: 'width: 100%;' }).val(data.tp.legal_name).appendTo($td);
 
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'VA ID: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $virginia_id = $$input({ size: 15 }).val(data.ta.virginia_id).appendTo($td);
+        var $virginia_id = $$input({ size: 15 }).val(data.tp.virginia_id).appendTo($td);
         $$td({ html: 'FEIN: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $FEIN = $$input({ size: 15 }).val(data.ta.FEIN).appendTo($td);
+        var $FEIN = $$input({ size: 15 }).val(data.tp.FEIN).appendTo($td);
         $$td({ html: 'Compliance Code: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $compliance_code = $$input({ size: 5 }).val(data.ta.compliance_code).appendTo($td);
+        var $compliance_code = $$input({ size: 5 }).val(data.tp.compliance_code).appendTo($td);
 
-        var paddr = data.ta.physical_address;
+        var paddr = data.tp.physical_address;
         var $fieldSet = $$fieldsetAndlegend('Physical Address').appendTo($dtlsec);
         $fieldSet.css({ display: 'inline-block', width: '49.7%' });
         var $table = $$table().appendTo($fieldSet);
@@ -121,7 +127,7 @@ var audit_case_detail = (function () {
         var $td = $$td().appendTo($tr);
         var $pzip = $$input({ size: 10 }).val(paddr.zip).appendTo($td);
 
-        var maddr = data.ta.mailing_address;
+        var maddr = data.tp.mailing_address;
         var $fieldSet = $$fieldsetAndlegend('Mailing Address').appendTo($dtlsec);
         $fieldSet.css({ display: 'inline-block', width: '49.7%' });
         var $table = $$table().appendTo($fieldSet);
@@ -147,11 +153,22 @@ var audit_case_detail = (function () {
         $$a({ html: 'Ok', click: save }).appendTo($td);
 
         function save() {
-            data.ta.legal_name = $legal_name.val();
-            data.ta.virginia_id = $virginia_id.val();
-            data.ta.FEIN = $FEIN.val();
-            data.ta.compliance_code = $compliance_code.val();
-            db.audit_case.set(id, data).then(taxpayerInformation);
+            data.tp.legal_name = $legal_name.val();
+            data.tp.virginia_id = $virginia_id.val();
+            data.tp.FEIN = $FEIN.val();
+            data.tp.compliance_code = $compliance_code.val();
+
+            paddr.street = $pstreet.val();
+            paddr.city = $pcity.val();
+            paddr.state = $pstate.val();
+            paddr.zip = $pzip.val();
+
+            maddr.street = $mstreet.val();
+            maddr.city = $mcity.val();
+            maddr.state = $mstate.val();
+            maddr.zip = $mzip.val();
+
+            db.audit_case.set(id, data).then(function () { taxpayerInformation($dtlsec_hdr); });
         }
     };
 

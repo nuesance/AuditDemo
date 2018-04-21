@@ -33,7 +33,7 @@ var main = (function () {
     function resetData() {
         db.audit_case.delAll();
         $.each(default_data, function (key, data) {
-            db.audit_case.add(key, data).then(renderList);
+            db.audit_case.add(key, data).then(audit_case.renderList);
         });
     };
 
