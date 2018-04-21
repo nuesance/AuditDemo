@@ -391,7 +391,7 @@ select {
     background-color: white;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 300ms ease-out;
+    transition: max-height 500ms ease-out;
 }
 
 @media screen and (orientation:portrait) {

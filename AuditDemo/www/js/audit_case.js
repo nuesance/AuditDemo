@@ -82,12 +82,13 @@ var audit_case_detail = (function () {
 
     function taxpayerInformation($dtlsec_hdr) {
         var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+
         var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
         var $table = $$table().appendTo($fieldSet);
         var $tr = $$tr().appendTo($table);
-        $$td({ html: 'Legal Name: ', style: 'text-align:right;' }).appendTo($tr);
+        $$td({ html: 'Legal Name: ', style: 'text-align: right;' }).appendTo($tr);
         var $td = $$td({ colspan: 5 }).appendTo($tr);
-        var $legal_name = $$input({ size: 50 }).val(data.ta.legal_name).appendTo($td);
+        var $legal_name = $$input({ size: 50, style: 'width: 100%;' }).val(data.ta.legal_name).appendTo($td);
 
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'VA ID: ', style: 'text-align:right;' }).appendTo($tr);
@@ -100,6 +101,47 @@ var audit_case_detail = (function () {
         var $td = $$td().appendTo($tr);
         var $compliance_code = $$input({ size: 5 }).val(data.ta.compliance_code).appendTo($td);
 
+        var paddr = data.ta.physical_address;
+        var $fieldSet = $$fieldsetAndlegend('Physical Address').appendTo($dtlsec);
+        $fieldSet.css({ display: 'inline-block', width: '49.7%' });
+        var $table = $$table().appendTo($fieldSet);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'Street: ', style: 'text-align:right;vertical-align: top;' }).appendTo($tr);
+        var $td = $$td({ colspan: 3 }).appendTo($tr);
+        var $pstreet = $$({ typ: 'textarea', rows: 3 }).val(paddr.street).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'City: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td({ colspan: 3 }).appendTo($tr);
+        var $pcity = $$input({ size: 50 }).val(paddr.city).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'State: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $pstate = $$input({ size: 2 }).val(paddr.state).appendTo($td);
+        $$td({ html: 'Zip: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $pzip = $$input({ size: 10 }).val(paddr.zip).appendTo($td);
+
+        var maddr = data.ta.mailing_address;
+        var $fieldSet = $$fieldsetAndlegend('Mailing Address').appendTo($dtlsec);
+        $fieldSet.css({ display: 'inline-block', width: '49.7%' });
+        var $table = $$table().appendTo($fieldSet);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'Street: ', style: 'text-align:right;vertical-align: top;' }).appendTo($tr);
+        var $td = $$td({ colspan: 3 }).appendTo($tr);
+        var $mstreet = $$({ typ: 'textarea', rows: 3 }).val(maddr.street).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'City: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td({ colspan: 3 }).appendTo($tr);
+        var $mcity = $$input({ size: 50 }).val(maddr.city).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'State: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $mstate = $$input({ size: 2 }).val(maddr.state).appendTo($td);
+        $$td({ html: 'Zip: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $mzip = $$input({ size: 10 }).val(maddr.zip).appendTo($td);
+
+        var $table = $$table().appendTo($dtlsec);
         var $tr = $$tr().appendTo($table);
         var $td = $$td().appendTo($tr);
         $$a({ html: 'Ok', click: save }).appendTo($td);
