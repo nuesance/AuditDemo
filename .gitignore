@@ -6,7 +6,9 @@
 **/gradle/
 **/.gradle/
 **/.vs
+**/.svn
 **/workspace.xml
 **/vcs.xml
 **/misc.xml
 **/gradlew*
+**/codeStyles

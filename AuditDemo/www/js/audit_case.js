@@ -72,13 +72,12 @@ var audit_case_detail = (function () {
 
         $('.dtlsec_hdr').click(function () {
             var $btn = $(this);
-            $btn.toggleClass('active');
             var $dtlsec = $btn.next();
-            if ($dtlsec.css('max-height') != '0px') {
-                $dtlsec.css('max-height', 0);
-                $dtlsec.css('padding', 0);
-            } else {
-                $dtlsec.css('padding', 5);
+            var expand = $dtlsec.css('max-height') == '0px';
+            $('.dtlsec').css({ 'max-height': 0 });
+            $('.dtlsec_hdr').removeClass('active');
+            if (expand) {
+                $btn.addClass('active');
                 $dtlsec.css('max-height', $dtlsec[0].scrollHeight);
             }
         });
@@ -168,7 +167,10 @@ var audit_case_detail = (function () {
             maddr.state = $mstate.val();
             maddr.zip = $mzip.val();
 
-            db.audit_case.set(id, data).then(function () { taxpayerInformation($dtlsec_hdr); });
+            db.audit_case.set(id, data).then(function () {
+                taxpayerInformation($dtlsec_hdr);
+                $dtlsec_hdr.click();
+            });
         }
     };
 
