@@ -1,44 +1,31 @@
 ﻿"use strict";
 
-var audit_case = (function () {
+var audit_case = (function() {
 
     function addCase() {
         var opts = {
             title: 'Create Case',
             fields: {
-<<<<<<< Updated upstream
                 legal_name: { typ: 'text', label: 'Legal Name', required: true, placeholder: 'Enter Legal Name' },
-=======
-                legal_name: { typ: 'text', label: 'Case Name', required: true, placeholder: 'Enter Case Name' }
->>>>>>> Stashed changes
             }
         };
 
         var form = ui.form.create(opts);
-        form.onSubmit = function (valuMap) {
+        form.onSubmit = function(valuMap) {
             var key = db.createKey();
             var data = {
-<<<<<<< Updated upstream
                 tp: {
-                    legal_name: valuMap.legal_name, physical_address: {}, mailing_address: {}, initial_contact: {}, representative: {}
-                }, primary_auditor: {}, details: {}, supervisor: {}, audit_period: {}
+                    legal_name: valuMap.legal_name,
+                    physical_address: {},
+                    mailing_address: {},
+                    initial_contact: {},
+                    representative: {}
+                },
+                primary_auditor: {},
+                details: {},
+                supervisor: {},
+                audit_period: {}
             };
-=======
-                ta:{
-                    legal_name: valuMap.legal_name
-                },
-                setup: {
-                    primary_auditor: {
-                    },
-                    details: {
-                    },
-                    supervisor: {
-                    }
-                },
-                audit_period: {
-                }
-            }
->>>>>>> Stashed changes
             db.audit_case.add(key, data).then(renderList);
         };
     };
@@ -46,13 +33,16 @@ var audit_case = (function () {
     function renderList() {
         var $listDiv = $('#case_list_div');
         $listDiv.empty();
-        util.callAjax('db', 'getAll', { tname: 'audit_case' }).then(function (map) {
-            $.each(map, function (id, data) {
+        util.callAjax('db', 'getAll', { tname: 'audit_case' }).then(function(map) {
+            $.each(map, function(id, data) {
                 var txt = '<b>Legal Name:</b> ' + data.tp.legal_name + ' <b>Virginia Id:</b> ' + data.tp.virginia_id + ' <b>FEIN:</b> ' + data.tp.FEIN +
                     '<br><b>Primary Auditor:</b> ' + data.primary_auditor.name;
 
                 $$div({
-                    html: txt, class: 'card_1', style: 'cursor: pointer;', click: function () {
+                    html: txt,
+                    class: 'card_1',
+                    style: 'cursor: pointer;',
+                    click: function() {
                         audit_case_detail.render(id, data);
                     }
                 }).appendTo($listDiv);
@@ -66,7 +56,7 @@ var audit_case = (function () {
     };
 })();
 
-var audit_case_detail = (function () {
+var audit_case_detail = (function() {
     var $menuTd;
     var $detailTd;
     var id;
@@ -91,7 +81,7 @@ var audit_case_detail = (function () {
         var $dtlsec_hdr = $$button({ class: 'dtlsec_hdr', html: 'Audit Years' }).appendTo($dataDiv);
         auditYears($dtlsec_hdr);
 
-        $('.dtlsec_hdr').click(function () {
+        $('.dtlsec_hdr').click(function() {
             var $btn = $(this);
             var $dtlsec = $btn.next();
             var expand = $dtlsec.css('max-height') == '0px';
@@ -188,7 +178,7 @@ var audit_case_detail = (function () {
             maddr.state = $mstate.val();
             maddr.zip = $mzip.val();
 
-            db.audit_case.set(id, data).then(function () {
+            db.audit_case.set(id, data).then(function() {
                 taxpayerInformation($dtlsec_hdr);
                 $dtlsec_hdr.click();
             });
@@ -224,4 +214,3 @@ var audit_case_detail = (function () {
         render: render,
     };
 })();
-
