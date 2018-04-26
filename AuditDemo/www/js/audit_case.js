@@ -6,7 +6,11 @@ var audit_case = (function () {
         var opts = {
             title: 'Create Case',
             fields: {
+<<<<<<< Updated upstream
                 legal_name: { typ: 'text', label: 'Legal Name', required: true, placeholder: 'Enter Legal Name' },
+=======
+                legal_name: { typ: 'text', label: 'Case Name', required: true, placeholder: 'Enter Case Name' }
+>>>>>>> Stashed changes
             }
         };
 
@@ -14,10 +18,27 @@ var audit_case = (function () {
         form.onSubmit = function (valuMap) {
             var key = db.createKey();
             var data = {
+<<<<<<< Updated upstream
                 tp: {
                     legal_name: valuMap.legal_name, physical_address: {}, mailing_address: {}, initial_contact: {}, representative: {}
                 }, primary_auditor: {}, details: {}, supervisor: {}, audit_period: {}
             };
+=======
+                ta:{
+                    legal_name: valuMap.legal_name
+                },
+                setup: {
+                    primary_auditor: {
+                    },
+                    details: {
+                    },
+                    supervisor: {
+                    }
+                },
+                audit_period: {
+                }
+            }
+>>>>>>> Stashed changes
             db.audit_case.add(key, data).then(renderList);
         };
     };
