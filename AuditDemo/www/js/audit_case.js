@@ -157,6 +157,23 @@ var audit_case_detail = (function() {
         var $td = $$td().appendTo($tr);
         var $mzip = $$input({ size: 10 }).val(maddr.zip).appendTo($td);
 
+
+        var maddr = data.tp.initial_contact;
+        var $fieldSet = $$fieldsetAndlegend('Initial Contact\'s Information').appendTo($dtlsec);
+        $fieldSet.css({ display: 'inline-block', width: '49.7%' });
+        var $table = $$table().appendTo($fieldSet);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'E-Mail: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td({ colspan: 3 }).appendTo($tr);
+        var $mcity = $$input({ size: 50 }).val(maddr.city).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'State: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $mstate = $$input({ size: 2 }).val(maddr.state).appendTo($td);
+        $$td({ html: 'Zip: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $mzip = $$input({ size: 10 }).val(maddr.zip).appendTo($td);
+
         var $table = $$table().appendTo($dtlsec);
         var $tr = $$tr().appendTo($table);
         var $td = $$td().appendTo($tr);
@@ -208,7 +225,6 @@ var audit_case_detail = (function() {
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'auditYears: ', style: 'text-align:right;' }).appendTo($tr);
     };
-
 
     return {
         render: render,
