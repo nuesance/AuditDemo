@@ -7,11 +7,11 @@ var db = (function () {
     }
 
     function createTable(tname) {
-        return Native_Db.createTable(tname);
+        return util.callAjax('db', 'createTable', { tname: tname });
     };
 
     function dropTable(tname) {
-        return Native_Db.dropTable(tname);
+        return util.callAjax('db', 'dropTable', { tname: tname });
     };
 
     function exists(tname, id) {
@@ -19,8 +19,7 @@ var db = (function () {
     };
 
     function get(tname, id) {
-        var str = Native_Db.get(tname, id);
-        return str ? util.buff.parse(str) : null;
+        return util.callAjax('db', 'get', { tname: tname, id: id });
     };
 
     function getAll(tname) {
@@ -47,7 +46,7 @@ var db = (function () {
     };
 
     function delAll(tname) {
-        util.callAjax('db', 'delAll', { tname: tname }).then(function () { });
+        return util.callAjax('db', 'delAll', { tname: tname });
     };
 
     function retrieve() {
@@ -60,14 +59,8 @@ var db = (function () {
         return rslt;
     };
 
-    function execute() {
-        var param = Array.prototype.slice.call(arguments);
-        var sql = param.shift();
-        param = param.length > 0 ? util.buff.stringify(param) : '';
-        var str = Native_Db.execute(sql, param);
-        var rslt = util.buff.parse(str);
-        util.checkError(rslt);
-        return rslt;
+    function execute(sql) {
+        return util.callAjax('db', 'execute', { sql: sql });
     };
 
     function resetData() {
@@ -124,6 +117,8 @@ var db = (function () {
     return {
         tableList: tableList,
         table: table,
+        createTable: createTable,
+        dropTable: dropTable,
         retrieve: retrieve,
         execute: execute,
         createKey: createKey,
@@ -300,7 +295,7 @@ var tools_db = (function () {
                 return;
             }
             var data = $tr.data();
-            db.execute('Delete From ' + tableName + ' Where id = ?', data.row[0]);
+            db.execute('Delete From ' + tableName + " Where id = '" + data.row[0] + "'");
             $tr.remove();
         }
 

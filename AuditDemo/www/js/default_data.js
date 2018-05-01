@@ -22,6 +22,7 @@
                 name: 'John Brezinski',
                 phone: '425-943-8336',
                 phone_ext: null,
+                title: 'Tax Senior',
                 fax: '425-637-0253',
                 fax_ext: null,
                 email: 'johnbrezinski@coinstar.com'
@@ -30,6 +31,7 @@
                 name: 'John Brezinski',
                 phone: '425-943-8336',
                 phone_ext: null,
+                title: 'Tax Senior',
                 fax: '425-637-0253',
                 fax_ext: null,
                 email: 'johnbrezinski@coinstar.com'
@@ -37,7 +39,7 @@
         },
 
         primary_auditor: {
-            name: 'Thomas Benton',
+            auditor: 'Thomas Benton',
             title: 'Interstate Auditor',
             address: 'P O Box 2509',
             city_st_zip: 'Dallas, GA 301 32-9998',
@@ -51,8 +53,9 @@
         },
 
         details: {
+            legal_name: 'Coinstar E-payment Services Inc',
             filing_status: 'C',
-            date_begin: '06/28/2011',
+            date_began: '06/28/2011',
             workpaper_id: 'MF-9C8',
             status: 'Open',
         },

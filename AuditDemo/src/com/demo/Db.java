@@ -3,8 +3,8 @@ package com.demo;
 import org.apache.commons.dbcp2.*;
 
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 public class Db {
 
@@ -17,8 +17,12 @@ public class Db {
         String tname = Util.getStr(rqst, "tname");
         String id = Util.getStr(rqst, "id");
         String data = Util.getStr(rqst, "data");
-        if ("add".equals(method)) {
+        if ("createTable".equals(method)) {
+            rslt = createTable(tname);
+        } else if ("add".equals(method)) {
             rslt = add(tname, id, data);
+        } else if ("get".equals(method)) {
+            rslt = get(tname, id);
         } else if ("getAll".equals(method)) {
             rslt = getAll(tname);
         } else if ("set".equals(method)) {
@@ -27,6 +31,9 @@ public class Db {
             rslt = put(tname, id, data);
         } else if ("delAll".equals(method)) {
             rslt = delAll(tname);
+        } else if ("execute".equals(method)) {
+            String sql = Util.getStr(rqst, "sql");
+            rslt = execute(sql);
         }
         return rslt;
     }
@@ -37,17 +44,8 @@ public class Db {
     }
 
     public Rslt createTable(String tname) {
-        String sql = "Create table " + tname + " (id Varchar(10) Not Null primary key, data Varchar(5000) Not Null)";
+        String sql = "Create Table If Not Exists " + tname + " (id Varchar(10) Not Null primary key, data Varchar(5000) Not Null)";
         return execute(sql);
-    }
-
-    public void createTable(String tname, String[] extraCols) {
-        String sql = "Create Table If Not Exists " + tname + " (id text Not Null, data text Not Null,";
-        for (int i = 0; i < extraCols.length; i++) {
-            sql += " " + extraCols[i] + " text,";
-        }
-        sql += " Constraint " + tname + "_pk Primary Key (id))";
-        execute(sql);
     }
 
     public Rslt dropTable(String tname) {
@@ -112,9 +110,14 @@ public class Db {
         }
     }
 
-    public Object get(String tname, String id) {
-        String val = getAsStr(tname, id);
-        return val == null ? null : Buff.parse(val);
+    public Rslt get(String tname, String id) {
+        try {
+            String val = getAsStr(tname, id);
+            if (val == null) return Rslt.okRslt();
+            else return Rslt.okRslt(Buff.parse(val));
+        } catch (Exception ex) {
+            return Rslt.exRslt(ex);
+        }
     }
 
     public HashMap<String, Object> getAsMap(String tname, String id) {

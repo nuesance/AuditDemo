@@ -160,6 +160,19 @@ var util = (function () {
         return doCallAjax(ajax);
     }
 
+    function callAjaxSrv(process, method, postData) {
+        postData = postData || {};
+        postData.process = process;
+        postData.method = method;
+        postData = util.buff.stringify(postData);
+        var ajax = {
+            url: settings.srv,
+            data: postData,
+        }
+
+        return doCallAjax(ajax);
+    }
+
     function doCallAjax(ajax, postData) {
         var defer = $.Deferred();
         ajax.type = 'POST';
@@ -208,6 +221,7 @@ var util = (function () {
         createShortcut: createShortcut,
         now: now,
         callAjax: callAjax,
+        callAjaxSrv: callAjaxSrv,
     };
 
 })();
