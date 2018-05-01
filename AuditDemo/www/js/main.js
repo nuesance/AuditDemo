@@ -18,12 +18,13 @@ var main = (function () {
             title: 'Audit Demo',
             atHome: true,
             nav: [
-                { icon: 'mi_storage', title: 'Database', backFunc: start, func: tools_db.start },
-                { icon: 'mi_delete_forever', title: 'Reset Database', func: resetData },
+                { icon: 'mi_list', title: 'List from Server', func: audit_case.listFromServer },
                 { icon: 'mi_settings', title: 'Settings', func: updateSetting },
-                { icon: 'mi_refresh', title: 'Sync With Server', func: audit_case.syncWithServer },
-                { title: 'List from Server', func: audit_case.listFromServer },
             ],
+            menu: [
+                { icon: 'mi_storage', title: 'Database', backFunc: start, func: tools_db.start },
+                { icon: 'mi_delete_forever', title: 'Reset Database', func: resetData }
+            ]
         };
         ui.header.render(opts);
 

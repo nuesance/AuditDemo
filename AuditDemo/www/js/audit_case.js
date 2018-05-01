@@ -79,13 +79,14 @@ var audit_case_detail = (function () {
             menu: []
         };
         if(editable && !fromServer) {
-            opts.menu.push({ icon: 'mi_storage', title: 'Sync', func: sync });
-            opts.menu.push({ icon: 'mi_storage', title: 'Check-in', func: checkin });
+            opts.menu.push({ icon: 'mi_sync', title: 'Sync', func: sync });
+            opts.menu.push({ icon: 'mi_keyboard_arrow_up', title: 'Check-in', func: checkin });
         }
 
         if(fromServer && !data.loc_id) {
-            opts.menu.push({ icon: 'mi_storage', title: 'Check-out', func: checkout });
+            opts.menu.push({ icon: 'mi_keyboard_arrow_down', title: 'Check-out', func: checkout });
         }
+        if(opts.menu.length == 0) delete opts.menu;
         ui.header.render(opts);
 
         var $dataDiv = ui.getEmptyDataDiv();
@@ -110,13 +111,13 @@ var audit_case_detail = (function () {
             $('.dtlsec_hdr').removeClass('active');
             if (expand) {
                 $btn.addClass('active');
-//                $dtlsec.css('max-height', $dtlsec[0].scrollHeight);
-                $dtlsec.css('max-height', '100%');
+                $dtlsec.css('max-height', $dtlsec[0].scrollHeight);
+//                $dtlsec.css('max-height', '100%');
             }
         });
 
         if (editable) {
-            $ay_hdr.click();
+            $tp_hdr.click();
         } else {
             $summary.click();
         }
@@ -126,7 +127,7 @@ var audit_case_detail = (function () {
     function sync() {
         util.callAjaxSrv('db', 'get', { tname: 'audit_case', id:id }).then(function (srvData) {
             util.callAjaxSrv('db', 'put', { tname: 'audit_case', id:id, data:util.buff.stringify(data) }).then(function() {
-                alert('done');
+                ui.toast('Synced');
             });
         });
     }
