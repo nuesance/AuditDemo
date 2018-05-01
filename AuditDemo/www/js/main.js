@@ -22,7 +22,7 @@ var main = (function () {
                 { icon: 'mi_delete_forever', title: 'Reset Database', func: resetData },
                 { icon: 'mi_settings', title: 'Settings', func: updateSetting },
                 { icon: 'mi_refresh', title: 'Sync With Server', func: audit_case.syncWithServer },
-                { title: 'Go To Server', func: function () { location.href = settings.srv + '/main.html' } },
+                { title: 'List from Server', func: audit_case.listFromServer },
             ],
         };
         ui.header.render(opts);

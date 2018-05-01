@@ -61,7 +61,7 @@
         },
 
         supervisor: {
-            name: 'Joanne Bialek',
+            supervisor: 'Joanne Bialek',
             title: 'Interstate Auditor Senior',
             address: '123 Topfield Rd.',
             city_st_zip: 'Ipswich, MA 01938',
@@ -74,7 +74,8 @@
 
         audit_period: {
             '2007': {
-                year_type: 'A',
+                year_type: 'C',
+                year: '2007',
                 begin_date: null,
                 end_date: null,
                 return_filed: true,
@@ -82,10 +83,20 @@
                 extended_thru: '10/15/2008',
                 final_return: false,
                 multistate_corp: true,
-                noprofit_corp: false,
-
+                nonprofit_corp: false,
             },
-            '2008': {},
+            '2008': {
+                year_type: 'C',
+                year: '2008',
+                begin_date: null,
+                end_date: null,
+                return_filed: false,
+                extension_filed: false,
+                extended_thru: '10/15/2008',
+                final_return: false,
+                multistate_corp: false,
+                nonprofit_corp: true,
+            },
         }
     }
 };

@@ -27,7 +27,7 @@ var audit_case = (function () {
         util.callAjax('db', 'getAll', { tname: 'audit_case' }).then(function (map) {
             $.each(map, function (id, data) {
                 var txt = '<b>Legal Name:</b> ' + data.tp.legal_name + ' <b>Virginia Id:</b> ' + data.tp.virginia_id + ' <b>FEIN:</b> ' + data.tp.FEIN +
-                    '<br><b>Primary Auditor:</b> ' + data.primary_auditor.name;
+                    '<br><b>Primary Auditor:</b> ' + data.primary_auditor.auditor;
 
                 $$div({
                     html: txt, class: 'card_1', style: 'cursor: pointer;', click: function () {
@@ -38,11 +38,19 @@ var audit_case = (function () {
         });
     };
 
-    function syncWithServer() {
-        util.callAjaxSrv('db', 'getAll', { tname: 'audit_case' }).then(function (srvData) {
-            util.callAjax('db', 'getAll', { tname: 'audit_case' }).then(function (localData) {
-                var srvKeys = Object.keys(srvData);
-                var localKeys = Object.keys(localData);
+    function listFromServer() {
+        var $listDiv = $('#case_list_div');
+        $listDiv.empty();
+        util.callAjaxSrv('db', 'getAll', { tname: 'audit_case' }).then(function (map) {
+            $.each(map, function (id, data) {
+                var txt = '<b>Legal Name:</b> ' + data.tp.legal_name + ' <b>Virginia Id:</b> ' + data.tp.virginia_id + ' <b>FEIN:</b> ' + data.tp.FEIN +
+                    '<br><b>Primary Auditor:</b> ' + data.primary_auditor.auditor;
+
+                $$div({
+                    html: txt, class: 'card_1', style: 'cursor: pointer;', click: function () {
+                        audit_case_detail.render(id, data, true);
+                    }
+                }).appendTo($listDiv);
             });
         });
     };
@@ -50,7 +58,7 @@ var audit_case = (function () {
     return {
         addCase: addCase,
         renderList: renderList,
-        syncWithServer: syncWithServer,
+        listFromServer: listFromServer,
     };
 })();
 
@@ -61,14 +69,23 @@ var audit_case_detail = (function () {
     var data;
     var editable;
 
-    function render(key, dat) {
+    function render(key, dat, fromServer) {
         id = key;
         data = dat;
         editable = data.loc_id == settings.loc_id;
 
         var opts = {
             title: data.tp.legal_name,
+            menu: []
         };
+        if(editable && !fromServer) {
+            opts.menu.push({ icon: 'mi_storage', title: 'Sync', func: sync });
+            opts.menu.push({ icon: 'mi_storage', title: 'Check-in', func: checkin });
+        }
+
+        if(fromServer && !data.loc_id) {
+            opts.menu.push({ icon: 'mi_storage', title: 'Check-out', func: checkout });
+        }
         ui.header.render(opts);
 
         var $dataDiv = ui.getEmptyDataDiv();
@@ -77,10 +94,10 @@ var audit_case_detail = (function () {
             taxpayerInformation($tp_hdr);
             var $ai_hdr = $$div({ class: 'dtlsec_hdr', html: 'Audit Information' }).appendTo($dataDiv);
             auditInformation($ai_hdr);
-            var $dtlsec_hdr = $$div({ class: 'dtlsec_hdr', html: 'Supervisor Information' }).appendTo($dataDiv);
-            supervisorInformation($dtlsec_hdr);
-            var $dtlsec_hdr = $$div({ class: 'dtlsec_hdr', html: 'Audit Years' }).appendTo($dataDiv);
-            auditYears($dtlsec_hdr);
+            var $si_hdr = $$div({ class: 'dtlsec_hdr', html: 'Supervisor Information' }).appendTo($dataDiv);
+            supervisorInformation($si_hdr);
+            var $ay_hdr = $$div({ class: 'dtlsec_hdr', html: 'Audit Years' }).appendTo($dataDiv);
+            auditYears($ay_hdr);
         }
         var $summary = $$div({ class: 'dtlsec_hdr', html: 'Summary' }).appendTo($dataDiv);
         summary($summary);
@@ -93,16 +110,40 @@ var audit_case_detail = (function () {
             $('.dtlsec_hdr').removeClass('active');
             if (expand) {
                 $btn.addClass('active');
-                $dtlsec.css('max-height', $dtlsec[0].scrollHeight);
+//                $dtlsec.css('max-height', $dtlsec[0].scrollHeight);
+                $dtlsec.css('max-height', '100%');
             }
         });
 
         if (editable) {
-            $ai_hdr.click();
+            $ay_hdr.click();
         } else {
             $summary.click();
         }
+
     };
+
+    function sync() {
+        util.callAjaxSrv('db', 'get', { tname: 'audit_case', id:id }).then(function (srvData) {
+            util.callAjaxSrv('db', 'put', { tname: 'audit_case', id:id, data:util.buff.stringify(data) }).then(function() {
+                alert('done');
+            });
+        });
+    }
+
+    function checkin(){
+        delete data.loc_id;
+        db.audit_case.set(id, data).then(function () {
+            sync();
+        });
+    }
+
+    function checkout(){
+        data.loc_id = settings.loc_id;
+        db.audit_case.put(id, data).then(function () {
+            sync();
+        });
+    }
 
     function taxpayerInformation($dtlsec_hdr) {
         var $dtlsec = $('#tp_info');
@@ -379,19 +420,157 @@ var audit_case_detail = (function () {
     };
 
     function supervisorInformation($dtlsec_hdr) {
-        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
-        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
-        var $table = $$table().appendTo($fieldSet);
+        var $dtlsec = $('#supervisor_info');
+        if ($dtlsec.length == 0) $dtlsec = $$div({ id: 'supervisor_info', class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        $dtlsec.empty();
+        $$span({html:"Please select the Audit Supervisor infromation you awnat to use for the Audit Adjustments Summary (A;; Years) Audit Report and when creating audit correspondence.", style:"display:block; padding:10px;"}).appendTo($dtlsec);
+
+        $$span({html:"Who is the Audit Supervisor on this audit?", style:"display:block; margin-top:16px; padding:10px;"}).appendTo($dtlsec);
+
+        var supervisor = data.supervisor;
+        var $table = $$table().appendTo($dtlsec);
         var $tr = $$tr().appendTo($table);
-        $$td({ html: 'supervisorInformation: ', style: 'text-align:right;' }).appendTo($tr);
+        $$td({html:'Supervisor: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_supervisor = $$input({size:30}).val(supervisor.supervisor).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({html:'Title: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_title = $$input({size:30}).val(supervisor.title).appendTo($td);
+        $$td({html:'Phone: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_phone = $$input({size:20}).val(supervisor.phone).appendTo($td);
+        $$td({html:'Ext: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_phone_ext = $$input({size:5}).val(supervisor.phone_ext).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({html:'Address: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_address = $$input({size:30}).val(supervisor.address).appendTo($td);
+        $$td({html:'Fax: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_fax = $$input({size:20}).val(supervisor.fax).appendTo($td);
+        $$td({html:'Ext: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_fax_ext = $$input({size:5}).val(supervisor.fax_ext).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$td({html:'City, ST Zip: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $s_city_st_zip = $$input({size:30}).val(supervisor.city_st_zip).appendTo($td);
+        $$td({html:'E-mail: ', style:'text-align:right;'}).appendTo($tr);
+        var $td = $$td({colspan:4}).appendTo($tr);
+        var $s_email = $$input({size:30}).val(supervisor.email).appendTo($td);
+        var $tr = $$tr().appendTo($table);
+        $$button({html:'Save to OCR Profiles'}).appendTo($$td({colspan: 3}).appendTo($tr));
+        $$button({html:'Load from OCR Profiles'}).appendTo($$td({colspan: 3}).appendTo($tr));
+
+        var $table = $$table().appendTo($dtlsec);
+        var $tr = $$tr().appendTo($table);
+        var $td = $$td().appendTo($tr);
+        $$button({ html: 'OK', click: save }).appendTo($td);
+        $$button({
+            html: 'Cancel', click: function () {
+                taxpayerInformation($dtlsec_hdr);
+                $dtlsec_hdr.click();
+            }
+        }).appendTo($td);
+
+        function save() {
+            supervisor.supervisor = $s_supervisor.val();
+            supervisor.title = $s_title.val();
+            supervisor.address = $s_address.val();
+            supervisor.city_st_zip = $s_city_st_zip.val();
+            supervisor.district = $s_district.val();
+            supervisor.phone = $s_phone.val();
+            supervisor.phone_ext = $s_phone_ext.val();
+            supervisor.fax = $s_fax.val();
+            supervisor.fex_ext = $s_fax_ext.val();
+            supervisor.email = $s_email.val();
+
+            db.audit_case.set(id, data).then(function () {
+                taxpayerInformation($dtlsec_hdr);
+                $dtlsec_hdr.click();
+            });
+        }
     };
 
     function auditYears($dtlsec_hdr) {
-        var $dtlsec = $$div({ class: 'dtlsec' }).insertAfter($dtlsec_hdr);
-        var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
-        var $table = $$table().appendTo($fieldSet);
+        var $dtlsec = $('#audit_years');
+        if ($dtlsec.length == 0) $dtlsec = $$div({ id: 'audit_years', class: 'dtlsec' }).insertAfter($dtlsec_hdr);
+        $dtlsec.empty();
+        $$span({html:"What are the years that you are auditing?", style:"display:block; padding:10px;"}).appendTo($dtlsec);
+
+        var ap = data.audit_period;
+        var $table = $$table().appendTo($dtlsec);
         var $tr = $$tr().appendTo($table);
-        $$td({ html: 'auditYears: ', style: 'text-align:right;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $td_year_dtl = $$td().appendTo($tr);
+        for(var year in data.audit_period) {
+            var $span = $$span({class:'ap_year', 'data-year':year, html: year, style:'display:block;cursor:pointer;'}).appendTo($td);
+        }
+        $('.ap_year').click(function(){
+            loadYear($(this).attr('data-year'));
+        });
+        $('.ap_year:first').click();
+        function loadYear(year){
+            var period = ap[year];
+            $td_year_dtl.empty();
+            var $fieldset = $$fieldsetAndlegend('Taxable Year').appendTo($td_year_dtl);
+            var $table = $$table().appendTo($fieldset);
+            var $tr = $$tr().appendTo($table);
+            var $td = $$td().appendTo($tr);
+            $$input({type:'radio', name:'year_type'}).prop('checked', true).appendTo($td);
+            var $td = $$td({colspan:2}).appendTo($tr);
+            $$span({html: 'Calender Year'}).appendTo($td);
+            var $td = $$td().appendTo($tr);
+            $$input({type:'radio', name:'year_type'}).appendTo($td);
+            var $td = $$td({colspan:3}).appendTo($tr);
+            $$span({html: 'Fiscal Year', style:'display:block'}).appendTo($td);
+            var $tr = $$tr().appendTo($table);
+            $$td().appendTo($tr);
+            var $td = $$td().appendTo($tr);
+            var $ap_year = $$input({size:5}).val(period.year).appendTo($td);
+            $$td({html:'(YYYY)', style:'width:100px;'}).appendTo($tr);
+            $$td().appendTo($tr);
+            $$td({html:'Begin Date:', style:'text-align:right;'}).appendTo($tr);
+            var $td = $$td().appendTo($tr);
+            var $ap_begin_date = $$input({size:5, style:'display:block'}).val(period.begin_date).appendTo($td);
+            $$td({html:'MM/DD/YY'}).appendTo($tr);
+            var $tr = $$tr().appendTo($table);
+            $$td({colspan:4}).appendTo($tr);
+            $$td({html:'End Date:', style:'text-align:right;'}).appendTo($tr);
+            var $td = $$td().appendTo($tr);
+            var $ap_end_date = $$input({size:5, style:'display:block'}).val(period.end_date).appendTo($td);
+            $$td({html:'MM/DD/YY'}).appendTo($tr);
+
+            var $td = $$td().appendTo($tr);
+            var $fieldset = $$fieldsetAndlegend('Options').appendTo($td_year_dtl);
+            var $table = $$table().appendTo($fieldset);
+            var $tr = $$tr().appendTo($table);
+            var $td = $$td().appendTo($tr);
+            var $ap_return_filed = $$input({type:'checkbox'}).prop('checked', period.return_filed).appendTo($td);
+            $$td({html:'Return Filed'}).appendTo($tr);
+            var $td = $$td().appendTo($tr);
+            var $ap_extension_filed = $$input({type:'checkbox'}).prop('checked', period.extension_filed).appendTo($td);
+            $$td({html:'Extension Filed', colspan:3}).appendTo($tr);
+            var $tr = $$tr().appendTo($table);
+            var $td = $$td().appendTo($tr);
+            var $ap_final_return = $$input({type:'checkbox'}).prop('checked', period.final_return).appendTo($td);
+            $$td({html:'Final Return'}).appendTo($tr);
+            var $td = $$td().appendTo($tr);
+            $$td({html:'Extended Thru: '}).appendTo($tr);
+            var $td = $$td().appendTo($tr);
+            var $ap_extended_thru = $$input().val(period.extended_thru).appendTo($td);
+            $$td({html:'MM/DD/YY'}).appendTo($tr);
+            var $tr = $$tr().appendTo($table);
+            var $td = $$td().appendTo($tr);
+            var $ap_multistate_corp = $$input({type:'checkbox'}).prop('checked', period.multistate_corp).appendTo($td);
+            $$td({html:'Multistate Corporation'}).appendTo($tr);
+            var $tr = $$tr().appendTo($table);
+            var $td = $$td().appendTo($tr);
+            var $ap_nonprofit_corp = $$input({type:'checkbox'}).prop('checked', period.nonprofit_corp).appendTo($td);
+            $$td({html:'Nonprofit Corporation'}).appendTo($tr);
+        }
     };
 
     function summary($dtlsec_hdr) {
