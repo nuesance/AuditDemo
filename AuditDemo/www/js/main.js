@@ -47,10 +47,11 @@ var main = (function () {
 
     function resetData() {
         db.audit_case.delAll();
-        $.each(default_data, function (key, data) {
-            data.loc_id = settings.loc_id;
-            db.audit_case.add(key, data).then(audit_case.renderList);
-        });
+        if (settings.is_server) {
+            $.each(default_data, function (key, data) {
+                db.audit_case.add(key, data).then(audit_case.renderList);
+            });
+        }
     };
 
     function updateSetting() {
