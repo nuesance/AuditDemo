@@ -43,33 +43,24 @@ textarea {
     width: 100%;
 }
 
-input[type=checkbox] {
-    width: 1.5rem;
-    height: 1.5rem;
+input[type=checkbox] + label {
+    position: relative;
+    bottom: .4rem;
 }
 
-    input[type=checkbox] + label {
-        position: relative;
-        bottom: .4rem;
-    }
-
-    input[type=checkbox]:checked + label {
-        color: #606060;
-    }
-
-input[type=radio] {
-    width: 1.5rem;
-    height: 1.5rem;
+input[type=checkbox]:checked + label {
+    color: #606060;
 }
 
-    input[type=radio] + label {
-        position: relative;
-        bottom: .4rem;
-    }
 
-    input[type=radio]:checked + label {
-        color: #606060;
-    }
+input[type=radio] + label {
+    position: relative;
+    bottom: .4rem;
+}
+
+input[type=radio]:checked + label {
+    color: #606060;
+}
 
 select {
     min-width: 75%;
