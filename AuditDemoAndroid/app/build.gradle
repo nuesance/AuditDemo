@@ -6,7 +6,7 @@ android {
         config {
             keyAlias 'chiman'
             keyPassword 'Prescient#1'
-            storeFile file('D:/AndroidApps/KeyStore/Chiman.jks')
+            storeFile file('../../KeyStore/Chiman.jks')
             storePassword 'Prescient#1'
         }
     }
