@@ -19,6 +19,12 @@ public class Db {
         String data = Util.getStr(rqst, "data");
         if ("createTable".equals(method)) {
             rslt = createTable(tname);
+        } else if ("dropTable".equals(method)) {
+            rslt = dropTable(tname);
+        } else if ("isEmpty".equals(method)) {
+            rslt = isEmpty(tname);
+        } else if ("exists".equals(method)) {
+            rslt = exists(tname, id);
         } else if ("add".equals(method)) {
             rslt = add(tname, id, data);
         } else if ("get".equals(method)) {
@@ -29,6 +35,8 @@ public class Db {
             rslt = set(tname, id, data);
         } else if ("put".equals(method)) {
             rslt = put(tname, id, data);
+        } else if ("del".equals(method)) {
+            rslt = del(tname, id);
         } else if ("delAll".equals(method)) {
             rslt = delAll(tname);
         } else if ("execute".equals(method)) {
@@ -53,7 +61,7 @@ public class Db {
         return execute(sql);
     }
 
-    public boolean isEmpty(String tname) {
+    public Rslt isEmpty(String tname) {
         try {
             Connection con = Pool.getConnection();
             String sql = "Select id From " + tname;
@@ -66,13 +74,13 @@ public class Db {
             }
             rs.close();
             con.close();
-            return empty;
+            return Rslt.okRslt(empty);
         } catch (Exception ex) {
-            throw new Error(ex);
+            return Rslt.exRslt(ex);
         }
     }
 
-    public boolean exists(String tname, String id) {
+    public Rslt exists(String tname, String id) {
         try {
             Connection con = Pool.getConnection();
             String sql = "Select id From " + tname + " Where id = '" + id + "'";
@@ -85,9 +93,9 @@ public class Db {
             }
             rs.close();
             con.close();
-            return exists;
+            return Rslt.okRslt(exists);
         } catch (Exception ex) {
-            throw new Error(ex);
+            return Rslt.exRslt(ex);
         }
     }
 
@@ -181,7 +189,17 @@ public class Db {
 
     public Rslt put(String tname, String id, String data) {
         try {
-            boolean exists = exists(tname, id);
+            String sql = "Select id From " + tname + " Where id = '" + id + "'";
+            Connection con = Pool.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            boolean exists = false;
+            while (rs.next()) {
+                exists = true;
+                break;
+            }
+            rs.close();
+            con.close();
             if (exists) {
                 execute("Update  " + tname + " Set data = '" + data + "' Where id = '" + id + "'");
             } else {
@@ -193,8 +211,8 @@ public class Db {
         }
     }
 
-    public void del(String tname, String id) {
-        execute("Delete From  " + tname + " Where id = '" + id + "'");
+    public Rslt del(String tname, String id) {
+        return execute("Delete From  " + tname + " Where id = '" + id + "'");
     }
 
     public Rslt delAll(String tname) {
