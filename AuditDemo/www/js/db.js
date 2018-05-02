@@ -15,7 +15,7 @@ var db = (function () {
     };
 
     function exists(tname, id) {
-        return Native_Db.exists(tname, id);
+        return util.callAjax('db', 'exists', { tname: tname, id: id });
     };
 
     function get(tname, id) {
@@ -42,7 +42,7 @@ var db = (function () {
     };
 
     function del(tname, id) {
-        Native_Db.del(tname, id);
+        return util.callAjax('db', 'del', { tname: tname, id: id });
     };
 
     function delAll(tname) {
@@ -50,6 +50,8 @@ var db = (function () {
     };
 
     function retrieve() {
+        alert("retrieve is not implemented");
+        return;
         var param = Array.prototype.slice.call(arguments);
         var sql = param.shift();
         param = param.length > 0 ? util.buff.stringify(param) : '';
@@ -109,13 +111,7 @@ var db = (function () {
         return tbl;
     };
 
-    function tableList() {
-        var str = Native_Db.tableList();
-        return util.buff.parse(str);
-    };
-
     return {
-        tableList: tableList,
         table: table,
         createTable: createTable,
         dropTable: dropTable,
@@ -271,20 +267,9 @@ var tools_db = (function () {
             form.onSubmit = function (valuMap) {
                 var data = valuMap.data;
                 data = JSON.parse(data);
-                valuMap.data = util.buff.stringify(data);
-                var params = [];
-                var sql = 'Update ' + tableName + ' Set ';
-                for (var i = 1; i < cols.length; i++) {
-                    var col = cols[i];
-                    sql += col + ' = ?';
-                    if (i < cols.length - 1) sql += ', ';
-                    params.push(valuMap[col]);
-                }
-                sql += ' Where id = ?';
-                params.push(valuMap['id']);
-                var args = [sql].concat(params);
-                db.execute.apply(null, args);
-                tableData(tableName, cols);
+                db.set(tableName, valuMap.id, data).then(function () {
+                    tableData(tableName, cols);
+                });
             };
         };
 
