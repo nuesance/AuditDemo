@@ -146,6 +146,8 @@ var db = (function () {
 
     return {
         tableList: tableList,
+        createTable: createTable,
+        dropTable: dropTable,
         table: table,
         retrieve: retrieve,
         execute: execute,

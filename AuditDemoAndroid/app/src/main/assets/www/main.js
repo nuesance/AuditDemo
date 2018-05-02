@@ -1,46 +1,13 @@
 "use strict";
 
+var offset = (new Date(0).getTimezoneOffset()) * 60;
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var settings = { srv: 'http://185.112.248.242:9002' };
+
 $(function () {
-    var url = window.location.href;
-    var shortcutPos = url.indexOf('shortcut=');
-    if (shortcutPos != -1) {
-        ui.resetLayer();
-        var shortcut = url.substr(shortcutPos + 9);
-        if (shortcut == 'apps') {
-            apps.start();
-        }
-        else if (shortcut == 'tools') {
-            tools.start();
-        }
-        else if (shortcut == 'contacts_grid') {
-            contact.start();
-        }
-        else if (shortcut == 'gallery_content') {
-            gallery.content.start();
-        }
-        else if (shortcut == 'gallery_explorer') {
-            gallery.explorer.start();
-        }
-        else if (shortcut == 'photo_compress') {
-            photoCompress.start();
-        }
-        else if (shortcut == 'nomedia') {
-            nomedia.start();
-        }
-        else if (shortcut == 'google_explorer') {
-            tools.gd_explorer.start();
-        }
-        else if (shortcut == 'photo_compress') {
-            photoCompress.start();
-        }
-        else if (shortcut == 'drive_sync') {
-            driveSync.start();
-        }
-    }
-    else {
-        ui.toast('Welcome to Audit Demo');
-        main.start();
-    }
+    db.createTable('ctrl');
+    db.createTable('audit_case');
+    main.start();
 });
 
 var main = (function () {
@@ -51,90 +18,57 @@ var main = (function () {
             title: 'Audit Demo',
             atHome: true,
             nav: [
-                { icon: 'mi_build', title: 'Tools', backFunc: start, func: function () { tools.start(); } },
+                { icon: 'mi_list', title: 'List from Server', func: audit_case.listFromServer },
+                { icon: 'mi_settings', title: 'Settings', func: updateSetting },
             ],
             menu: [
-                { icon: 'mi_settings', title: 'Settings', func: function () { ui.toast('Settings') } },
+                { icon: 'mi_storage', title: 'Database', backFunc: start, func: tools.db.start },
+                { icon: 'mi_delete_forever', title: 'Reset Database', func: resetData }
             ]
         };
-
         ui.header.render(opts);
 
         var $dataDiv = ui.getEmptyDataDiv();
-        ui.createAddButton(addCase);
-        var $listDiv = $$div({ style: 'width: 100vw; overflow: auto;' }).appendTo($dataDiv);
-        renderList();
+        ui.createAddButton(audit_case.addCase);
+        $$div({ id: 'case_list_div', style: 'width: 100vw; overflow: auto;' }).appendTo($dataDiv);
 
-        function addCase() {
-            var opts = {
-                title: 'Create Case',
-                fields: {
-                    case_name: { typ: 'text', label: 'Case Name', required: true, placeholder: 'Enter Case Name' },
-                    desc: { typ: 'textarea', label: 'Description', required: true, rows: 5 },
-                }
-            };
-
-            var form = ui.form.create(opts);
-            form.onSubmit = function (valuMap) {
-                var key = db.createKey();
-                db.audit_case.add(key, valuMap);
-                renderList();
-            };
+        var data = db.ctrl.get('settings');
+        if (data != null) {
+            settings = data;
+            audit_case.renderList();
         }
-
-        function renderList() {
-            $listDiv.empty();
-            var map = db.audit_case.getAll();
-            $.each(map, function (id, data) {
-                $$div({ html: data.case_name, class: 'card_1' }).appendTo($listDiv);
-            });
+        else {
+            updateSetting();
         }
+    }
+
+    function resetData() {
+        db.audit_case.delAll();
+        $.each(default_data, function (key, data) {
+            data.loc_id = settings.loc_id;
+            db.audit_case.add(key, data);
+            audit_case.renderList();
+        });
     };
 
-    return {
-        start: start,
+    function updateSetting() {
+        var opts = {
+            title: 'Settings',
+            fields: {
+                pc_name: { typ: 'text', label: 'PC Name', required: true, val: settings.pc_name, placeholder: 'Enter Name of this Computer' },
+                is_server: { typ: 'checkbox', label: 'Is Server?', val: settings.is_server },
+                srv: { typ: 'text', label: 'Server', val: settings.srv, placeholder: 'Server Name' },
+            }
+        };
+
+        var form = ui.form.create(opts);
+        form.onSubmit = function (data) {
+            settings = data;
+            settings.loc_id = settings.loc_id || db.createKey();
+            db.ctrl.set('settings', settings);
+            ui.toast('Settings saved');
+        };
     };
+
+    return { start: start };
 })();
-
-var onBack = (function () {
-    var stack = [];
-
-    function add(func) {
-        stack.push(func);
-    };
-
-    function set(func) {
-        stack = [func];
-    };
-
-    function clear() {
-        stack = [];
-    };
-
-    function has() {
-        if ($('.dialog_bg').length > 0) return true;
-        return stack.length > 0;
-    };
-
-    function backIsHome() {
-        return stack.length > 0 && stack[stack.length - 1] == main.start;
-    };
-
-    function back() {
-        var $ele = $('.dialog_bg');
-        if ($ele.length > 0) {
-            $($ele[$ele.length - 1]).click();
-            return 1;
-        }
-        if (stack.length > 0) {
-            var func = stack.splice(stack.length - 1, 1)[0];
-            func();
-            return 1;
-        }
-
-        return 0;
-    };
-
-    return { add: add, set: set, clear: clear, has: has, back: back, backIsHome: backIsHome };
-})();
-

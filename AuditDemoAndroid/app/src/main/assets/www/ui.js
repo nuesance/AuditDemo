@@ -859,6 +859,30 @@ function $$a(ele) {
     return ui.ele.build(ele);
 }
 
+function $$button(ele) {
+    var ele = ele || {};
+    ele.typ = 'button';
+    return ui.ele.build(ele);
+}
+
+function $$fieldset(ele) {
+    var ele = ele || {};
+    ele.typ = 'fieldset';
+    return ui.ele.build(ele);
+}
+
+function $$legend(ele) {
+    var ele = ele || {};
+    ele.typ = 'legend';
+    return ui.ele.build(ele);
+}
+
+function $$fieldsetAndlegend(title) {
+    var ele = { typ: 'fieldset', child: { typ: 'legend', html: title } };
+    return ui.ele.build(ele);
+}
+
+
 function $$svg(ele) {
     var svg = {
         typ: 'svg', style: 'width: ' + ele.size + 'px; height: ' + ele.size + 'px', viewBox: '0 0 24 24',

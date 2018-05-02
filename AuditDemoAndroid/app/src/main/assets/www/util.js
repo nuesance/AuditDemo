@@ -148,6 +148,67 @@ var util = (function () {
         return new Date().getTime();
     };
 
+    function callAjax(process, method, postData) {
+        postData = postData || {};
+        postData.process = process;
+        postData.method = method;
+        postData = util.buff.stringify(postData);
+        var ajax = {
+            url: '',
+            data: postData,
+        }
+
+        return doCallAjax(ajax);
+    }
+
+    function callAjaxSrv(process, method, postData) {
+        postData = postData || {};
+        postData.process = process;
+        postData.method = method;
+        postData = util.buff.stringify(postData);
+        var ajax = {
+            url: settings.srv,
+            data: postData,
+        }
+
+        return doCallAjax(ajax);
+    }
+
+    function doCallAjax(ajax, postData) {
+        var defer = $.Deferred();
+        ajax.type = 'POST';
+
+        $('#ErrDiv').remove();
+        var jqxhr = $.ajax(ajax);
+
+        jqxhr.fail(function (jqXHR, textStatus, errorThrown) {
+            var ajaxProcessing = false;
+            if (jqXHR.responseText) {
+                var $ErrDiv = $('<div />').attr({ id: 'ErrDiv' }).appendTo($('body'));
+                $ErrDiv.html(jqXHR.responseText);
+            }
+            else {
+                var msg = 'Server Communication Error, Please make data connection.';
+                alert(msg);
+            }
+        });
+
+        jqxhr.done(function (rslt) {
+            try {
+                rslt = util.buff.parse(rslt);
+            }
+            catch (err) {
+                alert(err);
+            }
+            checkError(rslt);
+            if (rslt.rc == 0) {
+                defer.resolve(rslt.data);
+            }
+        });
+
+        return defer;
+    };
+
     return {
         checkError: checkError,
         alert: alrt,
@@ -161,6 +222,8 @@ var util = (function () {
         //storageUrl: storageUrl,
         createShortcut: createShortcut,
         now: now,
+        callAjax: callAjax,
+        callAjaxSrv: callAjaxSrv,
     };
 
 })();
@@ -375,4 +438,46 @@ util.buff = (function () {
     }
 
     return { parse: parse, stringify: stringify, b64: b64, b64_pos: b64_pos, numToStr: numToStr, strToNum: strToNum };
+})();
+
+var onBack = (function () {
+    var stack = [];
+
+    function add(func) {
+        stack.push(func);
+    };
+
+    function set(func) {
+        stack = [func];
+    };
+
+    function clear() {
+        stack = [];
+    };
+
+    function has() {
+        if ($('.dialog_bg').length > 0) return true;
+        return stack.length > 0;
+    };
+
+    function backIsHome() {
+        return stack.length > 0 && stack[stack.length - 1] == main.start;
+    };
+
+    function back() {
+        var $ele = $('.dialog_bg');
+        if ($ele.length > 0) {
+            $($ele[$ele.length - 1]).click();
+            return 1;
+        }
+        if (stack.length > 0) {
+            var func = stack.splice(stack.length - 1, 1)[0];
+            func();
+            return 1;
+        }
+
+        return 0;
+    };
+
+    return { add: add, set: set, clear: clear, has: has, back: back, backIsHome: backIsHome };
 })();

@@ -181,7 +181,6 @@ var util = (function () {
         var jqxhr = $.ajax(ajax);
 
         jqxhr.fail(function (jqXHR, textStatus, errorThrown) {
-            ajaxProcessing = false;
             if (jqXHR.responseText) {
                 var $ErrDiv = $('<div />').attr({ id: 'ErrDiv' }).appendTo($('body'));
                 $ErrDiv.html(jqXHR.responseText);
