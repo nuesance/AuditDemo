@@ -152,18 +152,20 @@ var audit_case_detail = (function () {
         var $fieldSet = $$fieldsetAndlegend('General Information').appendTo($dtlsec);
         var $table = $$table().appendTo($fieldSet);
         var $tr = $$tr().appendTo($table);
-        $$td({ html: 'Legal Name: ', style: 'text-align: right;' }).appendTo($tr);
-        var $td = $$td({ colspan: 5 }).appendTo($tr);
-        var $legal_name = $$input({ size: 50, style: 'width: 100%;' }).val(data.tp.legal_name).appendTo($td);
+        $$td({ html: 'Legal Name: ', style: 'text-align:right; white-space: nowrap;' }).appendTo($tr);
+        var $td = $$td().appendTo($tr);
+        var $legal_name = $$input({ size: 30, style: 'width: 100%;' }).val(data.tp.legal_name).appendTo($td);
 
         var $tr = $$tr().appendTo($table);
-        $$td({ html: 'Virginia Id: ', style: 'text-align:right;' }).appendTo($tr);
+        $$td({ html: 'Virginia Id: ', style: 'text-align:right; white-space: nowrap;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
         var $virginia_id = $$input({ size: 15 }).val(data.tp.virginia_id).appendTo($td);
-        $$td({ html: 'FEIN: ', style: 'text-align:right;' }).appendTo($tr);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'FEIN: ', style: 'text-align:right; white-space: nowrap;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
         var $FEIN = $$input({ size: 15 }).val(data.tp.FEIN).appendTo($td);
-        $$td({ html: 'Compliance Code: ', style: 'text-align:right;' }).appendTo($tr);
+        var $tr = $$tr().appendTo($table);
+        $$td({ html: 'Compliance Code: ', style: 'text-align:right; white-space: nowrap;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
         var $compliance_code = $$input({ size: 5 }).val(data.tp.compliance_code).appendTo($td);
 

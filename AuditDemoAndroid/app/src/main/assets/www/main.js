@@ -44,12 +44,6 @@ var main = (function () {
 
     function resetData() {
         db.audit_case.delAll();
-        /*
-        $.each(default_data, function (key, data) {
-            data.loc_id = settings.loc_id;
-            db.audit_case.add(key, data);
-        });
-        */
         audit_case.renderList();
     };
 
