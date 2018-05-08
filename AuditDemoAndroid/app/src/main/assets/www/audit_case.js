@@ -230,14 +230,14 @@ var audit_case_detail = (function () {
         var $icphone = $$input({ size: 15 }).val(inicontact.phone).appendTo($td);
         $$td({ html: 'Ext: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $icphoneext = $$input({ size: 10 }).val(inicontact.phone_ext).appendTo($td);
+        var $icphoneext = $$input({ size: 5 }).val(inicontact.phone_ext).appendTo($td);
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'Fax: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
         var $icfax = $$input({ size: 15 }).val(inicontact.fax).appendTo($td);
         $$td({ html: 'Ext: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $icfaxext = $$input({ size: 10 }).val(inicontact.fax_ext).appendTo($td);
+        var $icfaxext = $$input({ size: 5 }).val(inicontact.fax_ext).appendTo($td);
 
         var representative = data.tp.representative;
         var $fieldSet = $$fieldsetAndlegend('Representative Worked With').appendTo($dtlsec);
@@ -260,14 +260,14 @@ var audit_case_detail = (function () {
         var $repphone = $$input({ size: 15 }).val(representative.phone).appendTo($td);
         $$td({ html: 'Ext: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $repphoneext = $$input({ size: 10 }).val(representative.phone_ext).appendTo($td);
+        var $repphoneext = $$input({ size: 5 }).val(representative.phone_ext).appendTo($td);
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'Fax: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
         var $repfax = $$input({ size: 15 }).val(representative.fax).appendTo($td);
         $$td({ html: 'Ext: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $repfaxext = $$input({ size: 10 }).val(representative.fax_ext).appendTo($td);
+        var $repfaxext = $$input({ size: 5 }).val(representative.fax_ext).appendTo($td);
 
         var $table = $$table().appendTo($dtlsec);
         var $tr = $$tr().appendTo($table);
