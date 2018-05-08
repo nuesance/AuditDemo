@@ -165,7 +165,7 @@ var audit_case_detail = (function () {
         var $td = $$td().appendTo($tr);
         var $FEIN = $$input({ size: 15 }).val(data.tp.FEIN).appendTo($td);
         var $tr = $$tr().appendTo($table);
-        $$td({ html: 'Compliance Code: ', style: 'text-align:right; white-space: nowrap;' }).appendTo($tr);
+        $$td({ html: 'Compliance Cd: ', style: 'text-align:right; white-space: nowrap;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
         var $compliance_code = $$input({ size: 5 }).val(data.tp.compliance_code).appendTo($td);
 
@@ -175,7 +175,7 @@ var audit_case_detail = (function () {
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'Street: ', style: 'text-align:right;vertical-align: top;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $pstreet = $$({ typ: 'textarea', cols: 40, rows: 3 }).val(paddr.street).appendTo($td);
+        var $pstreet = $$({ typ: 'textarea', cols: 35, rows: 3 }).val(paddr.street).appendTo($td);
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'City: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
@@ -195,7 +195,7 @@ var audit_case_detail = (function () {
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'Street: ', style: 'text-align:right;vertical-align: top;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);
-        var $mstreet = $$({ typ: 'textarea', cols: 40, rows: 3 }).val(maddr.street).appendTo($td);
+        var $mstreet = $$({ typ: 'textarea', cols: 35, rows: 3 }).val(maddr.street).appendTo($td);
         var $tr = $$tr().appendTo($table);
         $$td({ html: 'City: ', style: 'text-align:right;' }).appendTo($tr);
         var $td = $$td().appendTo($tr);

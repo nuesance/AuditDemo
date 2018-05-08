@@ -11,12 +11,6 @@ html, body {
     padding: 0;
 }
 
-label {
-    color: gray;
-    margin: 0.2rem;
-}
-
-
 input[type=checkbox] + label {
     position: relative;
     bottom: .4rem;
@@ -62,6 +56,8 @@ button {
 fieldset {
     border: 1px solid gray;
     border-radius: 4px;
+    display: inline-block;
+    width: 96vw;
 }
 
 legend {
@@ -241,64 +237,6 @@ legend {
         padding-top: 110%;
         display: inline-block;
     }
-
-.thumb_txt {
-    text-align: center;
-    overflow: hidden;
-    height: .9rem;
-    font-size: .8rem;
-}
-
-.folder_div {
-    display: inline-block;
-    width: 25%;
-    border: 1px solid white;
-    vertical-align: top;
-    text-align: center;
-}
-
-.contact_div {
-    display: inline-block;
-    width: 33.33%;
-    border-right: 2px solid black;
-    background-size: cover;
-    background-position: center top;
-}
-
-    .contact_div:before {
-        content: '';
-        padding-top: 100%;
-        display: inline-block;
-    }
-
-    .contact_div .text_div {
-        text-align: center;
-        overflow: hidden;
-        height: .9rem;
-        color: white;
-        font-size: .8rem;
-        text-shadow: -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000, -2px 0 0 #000000, 2px 0 0 #000000, 0 2px 0 #000000, 0 -2px 0 #000000;
-    }
-
-.app_outer_div {
-    display: inline-block;
-    padding: 10px;
-    width: 25%;
-}
-
-    .app_outer_div:hover {
-        background-color: #F5F5F5;
-        box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-    }
-
-.app_icon {
-    background-color: #F5F5F5;
-    margin-bottom: 10px;
-    text-align: center;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-}
 
 .tools_db_table {
     width: 100%;
