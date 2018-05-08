@@ -1,0 +1,14 @@
+prunsrv //IS//AuditDemo ^
+--Install=D:\AuditDemo\trunk\Deploy\prunsrv.exe ^
+--DisplayName="Audit Demo" ^
+--Jvm=auto ^
+--StartMode=jvm ^
+--StopMode=jvm ^
+--Startup=auto ^
+--Classpath=AuditDemo.jar;hsqldb.jar;commons-dbcp2-2.2.0.jar;commons-logging-1.2.jar;commons-pool2-2.5.0.jar; ^
+--StartClass=com.demo.Main ^
+--StopClass=com.demo.Main ^
+--StopParams=stop ^
+--LogPath=log ^
+--StdOutput=auto ^
+--StdError=auto 
